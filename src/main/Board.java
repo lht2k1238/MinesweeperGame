@@ -192,43 +192,43 @@ public class Board extends JPanel {
 	// Phương thức vẽ bảng Minesweeper
 	@Override
 	public void paintComponent(Graphics g) {
-		int uncover = 0;
+		int uncover = 0; // số ô đã mở, hay nói cách khác là số bước đi mà người chơi đã thực hiện
 
 		for (int i = 0; i < N_ROWS; i++) {
 			for (int j = 0; j < N_COLS; j++) {
 				int cell = field[(i * N_COLS) + j];
 
-				if (inGame && cell == MINE_CELL) {
+				if (inGame && cell == MINE_CELL) { // người chơi đang chơi và mở ô chứa mìn
 					inGame = false;
 				}
 
-				if (!inGame) {
-					if (cell == COVERED_MINE_CELL) {
+				if (!inGame) { // game đã kết thúc 
+					if (cell == COVERED_MINE_CELL) { // 1 ô là ô chứa mìn được mở
 						cell = DRAW_MINE;
-					} else if (cell == MARKED_MINE_CELL) {
+					} else if (cell == MARKED_MINE_CELL) { // 1 ô là ô chứa mìn đã được đánh dấu
 						cell = DRAW_MARK;
-					} else if (cell > COVERED_MINE_CELL) {
+					} else if (cell > COVERED_MINE_CELL) { // 1 ô không phải ô chứa mìn nhưng được đánh dấu
 						cell = DRAW_WRONG_MARK;
-					} else if (cell > MINE_CELL) {
+					} else if (cell > MINE_CELL) { // 1 ô chứa mìn chưa được mở
 						cell = DRAW_COVER;
 					}
-				} else {
-					if (cell > COVERED_MINE_CELL) {
+				} else { //game chưa kết thúc
+					if (cell > COVERED_MINE_CELL) { // 1 ô được đánh dấu
 						cell = DRAW_MARK;
-					} else if (cell > MINE_CELL) {
+					} else if (cell > MINE_CELL) { // 1 ô chứa mìn chưa được mở 
 						cell = DRAW_COVER;
-						uncover++;
+						uncover++; // người chơi thực hiện 1 bước đi 
 					}
 				}
 
 				g.drawImage(img[cell], (j * CELL_SIZE), (i * CELL_SIZE), this);
 			}
 		}
-
+		// Thông báo khi người chơi chiến thắng
 		if (uncover == 0 && inGame) {
 			inGame = false;
 			statusbar.setText("Game won");
-		} else if (!inGame) {
+		} else if (!inGame) { // Thông báo khi người chơi mở ô chứa mìn
 			statusbar.setText("Game lost");
 		}
 	}
