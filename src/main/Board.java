@@ -129,7 +129,10 @@ public class Board extends JPanel {
 	private void find_empty_cells(int j) {
 		int current_col = j % N_COLS;
 		int cell;
-
+	/* 
+	 * kiểm tra các ô nằm ở phía trên và bên trái của ô hiện tại, 
+	 * và nếu các ô đó chưa được mở và không chứa mìn, sẽ mở các ô đó và tiếp tục tìm kiếm các ô trống liên tiếp.	
+	 */
 		if (current_col > 0) {
 			cell = j - N_COLS - 1;
 			if (cell >= 0 && field[cell] > MINE_CELL) {
@@ -150,6 +153,7 @@ public class Board extends JPanel {
 					find_empty_cells(cell);
 			}
 		}
+	//kiểm tra các ô nằm ngay trên và ngay dưới ô hiện tại, và thực hiện hành động tương tự như trên.
 		cell = j - N_COLS;
 		if (cell >= 0 && field[cell] > MINE_CELL) {
 			field[cell] -= COVER_FOR_CELL;
@@ -162,7 +166,7 @@ public class Board extends JPanel {
 			if (field[cell] == EMPTY_CELL)
 				find_empty_cells(cell);
 		}
-
+	//kiểm tra các ô nằm ở phía dưới và bên phải của ô hiện tại, và thực hiện hành động tương tự.
 		if (current_col < (N_COLS - 1)) {
 			cell = j - N_COLS + 1;
 			if (cell >= 0 && field[cell] > MINE_CELL) {
@@ -245,19 +249,28 @@ public class Board extends JPanel {
 				newGame();
 				repaint();
 			}
-
+		//USE CASE ĐẶT CỜ
 			if ((x < N_COLS * CELL_SIZE) && (y < N_ROWS * CELL_SIZE)) {
-				if (e.getButton() == MouseEvent.BUTTON3) { // Nhấn chuột phải để đánh dấu
-					if (field[(cRow * N_COLS) + cCol] > MINE_CELL) {
-						doRepaint = true;
-						if (field[(cRow * N_COLS) + cCol] <= COVERED_MINE_CELL) {
-							if (minesLeft > 0) {
-								field[(cRow * N_COLS) + cCol] += MARK_FOR_CELL;
-								minesLeft--;
-								String msg = Integer.toString(minesLeft);
-								statusbar.setText(msg);
+				if (e.getButton() == MouseEvent.BUTTON3) { // Nhấn chuột phải để đánh dấu (cờ)
+					if (field[(cRow * N_COLS) + cCol] > MINE_CELL) { // Kiểm tra nếu ô hiện tại đang được che phủ (không phải ô đã mở)
+/*
+ * field là một mảng một chiều (kiểu int[]) đại diện cho tất cả các ô trên bảng Minesweeper. 
+    Mỗi phần tử trong mảng này lưu trữ trạng thái của một ô trên bảng.
+ * Bảng Minesweeper có kích thước N_ROWS x N_COLS. 
+   Để truy cập một ô cụ thể trong mảng một chiều field, chúng ta cần tính chỉ số của ô đó.
+	Chỉ số này được tính bằng công thức (cRow * N_COLS) + cCol, trong đó:
+		cRow: là chỉ số hàng của ô (từ 0 đến N_ROWS - 1).
+		cCol:  là chỉ số cột của ô (từ 0 đến N_COLS - 1).
+ */
+						doRepaint = true; // Đặt cờ cho phép vẽ lại bảng sau khi thay đổi trạng thái ô
+						if (field[(cRow * N_COLS) + cCol] <= COVERED_MINE_CELL) { // Kiểm tra nếu ô hiện tại chưa được đánh dấu (không có cờ)
+							if (minesLeft > 0) { // Kiểm tra nếu còn cờ để đặt (số mìn chưa đánh dấu lớn hơn 0)
+								field[(cRow * N_COLS) + cCol] += MARK_FOR_CELL; // Đặt cờ (tăng giá trị ô bởi MARK_FOR_CELL:Ô được đánh dấu có cờ.)
+								minesLeft--; // Giảm số lượng cờ còn lại đi 1
+								String msg = Integer.toString(minesLeft); // Cập nhật thông báo số lượng mìn còn lại
+								statusbar.setText(msg); // Hiển thị số lượng mìn còn lại trên thanh trạng thái
 							} else {
-								statusbar.setText("No marks left");
+								statusbar.setText("No marks left"); // Nếu không còn cờ để đặt, hiển thị thông báo
 							}
 						} else {
 							field[(cRow * N_COLS) + cCol] -= MARK_FOR_CELL;
