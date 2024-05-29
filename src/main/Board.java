@@ -191,8 +191,9 @@ public class Board extends JPanel {
 
 	// Phương thức vẽ bảng Minesweeper
 	@Override
+	//USE CASE GAME OVER
 	public void paintComponent(Graphics g) {
-		int uncover = 0; // số ô đã mở, hay nói cách khác là số bước đi mà người chơi đã thực hiện
+		int uncover = 0; // số mìn đã mở
 
 		for (int i = 0; i < N_ROWS; i++) {
 			for (int j = 0; j < N_COLS; j++) {
@@ -215,15 +216,13 @@ public class Board extends JPanel {
 				} else { //game chưa kết thúc
 					if (cell > COVERED_MINE_CELL) { // 1 ô được đánh dấu
 						cell = DRAW_MARK;
-					} else if (cell > MINE_CELL) { // 1 ô chứa mìn chưa được mở 
+					} else if (cell > MINE_CELL) { // 1 ô chưa được mở 
 						cell = DRAW_COVER;
-						uncover++; // người chơi thực hiện 1 bước đi 
+						uncover++; // ??
 					}
 				}
 
 				g.drawImage(img[cell], (j * CELL_SIZE), (i * CELL_SIZE), this);
-			}
-		}
 		// Thông báo khi người chơi chiến thắng
 		if (uncover == 0 && inGame) {
 			inGame = false;
@@ -280,26 +279,26 @@ public class Board extends JPanel {
 						}
 					}
 				} else { // Nhấn chuột trái để mở ô
-					if (field[(cRow * N_COLS) + cCol] > COVERED_MINE_CELL) {
+					if (field[(cRow * N_COLS) + cCol] > COVERED_MINE_CELL) { //Kiểm tra nếu 1 ô ???
 						return;
 					}
 
 					if ((field[(cRow * N_COLS) + cCol] > MINE_CELL)
-							&& (field[(cRow * N_COLS) + cCol] < MARKED_MINE_CELL)) {
+							&& (field[(cRow * N_COLS) + cCol] < MARKED_MINE_CELL)) { //Kiểm tra nếu một ô bị che phủ
 						field[(cRow * N_COLS) + cCol] -= COVER_FOR_CELL;
 						doRepaint = true;
 
-						if (field[(cRow * N_COLS) + cCol] == MINE_CELL) {
+						if (field[(cRow * N_COLS) + cCol] == MINE_CELL) { //Kiểm tra nếu ô được mở là mìn
 							inGame = false;
 						}
 
-						if (field[(cRow * N_COLS) + cCol] == EMPTY_CELL) {
+						if (field[(cRow * N_COLS) + cCol] == EMPTY_CELL) { //Kiểm tra nếu ô được mở là ô rỗng thì sẽ thực hiện tìm số ô rỗng xung quanh nó 
 							find_empty_cells((cRow * N_COLS) + cCol);
 						}
 					}
 				}
 
-				if (doRepaint) {
+				if (doRepaint) { //Vẽ lại bảng Minesweeper
 					repaint();
 				}
 			}
